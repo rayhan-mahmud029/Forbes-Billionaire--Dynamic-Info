@@ -89,26 +89,34 @@
         <!-- SORT AND FILTER START-->
         <div class="flex justify-between align-center">
           <!-- Sort -->
-          <div>
-          <select class="select w-full max-w-xs">
+          <div class="p-4 w-1/4">
+          <select class="select w-full max-w-xs select-bordered" onchange="sortDataLimit()" id="sort-option">
             <option disabled selected>Sort by_</option>
-            <option>Top 50</option>
-            <option>Top 100</option>
-            <option>Top 200</option>
+            <option>Top <span>50</span></option>
+            <option>Top <span>100</span></option>
+            <option>Top <span>200</span></option>
             <option>ALL</option>
           </select>
           </div>
 
           <!-- FILTER -->
-          <div>
-
+          <div class="p-4 w-1/4">
+            <select class="select w-full max-w-xs select-bordered" onchange="filterData()" id="filter-option">
+              <option disabled selected>Filter_</option>
+              <option>real-time</option>
+              <option>youngest</option>
+              <option>oldest</option>
+              <option>female</option>
+              <option>male</option>
+              </select>
+              
           </div>
         </div>
         <!-- SORT AND FILTER END-->
 
         <!-- Main Contents -->
         <div class="bg-purple-100 ">
-            <h1 class="text-2xl uppercase font-semibold p-4">Top 500 Billionaires</h1>
+            <h1 class="text-2xl uppercase font-semibold p-4" id="filter-element">Forbes Top <span id="sort-limit">20</span> Billionaires</h1>
 
             <!-- Table Data -->
             <div class="overflow-x-auto overflow-y-auto w-11/12 mx-auto max-h-96">
