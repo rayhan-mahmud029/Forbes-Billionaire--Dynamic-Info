@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Forbes Billionaire List</title>
+
+    <!-- Custom Style -->
+    <link rel="stylesheet" href="./css/style.css">
+
+    <!-- Daisy UI with Tailwind -->
+    <link href="https://cdn.jsdelivr.net/npm/daisyui@2.51.3/dist/full.css" rel="stylesheet" type="text/css" />
+<script src="https://cdn.tailwindcss.com"></script>
+</head>
+
+<!-- MODAL BODY Put this part before tag -->
+<input type="checkbox" id="my-modal-3" class="modal-toggle" />
+<div class="modal" id="modal-body">
+
+  </div>
+
+
+<body class="flex bg-white" onload="getData(20)">
+
+    <!-- HEADER LEFT NAVBAR -->
+    <header class="w-3/12 bg-current ">
+        <div class="my-8 text-center">
+        <h1 class="text-3xl font-bold uppercase text-white">Billionaire</h1>
+        <h4 class="text-xl font-semibold uppercase text-cyan-400">Diary</h4>
+        </div>
+
+        <div>
+            <div class="py-4 px-2 bg-cyan-200 mb-2 mx-2 rounded-md">
+                <a href="">
+                    <h1 class="text-black text-center">Sort BY</h1>
+                </a>
+            </div>
+            <div class="py-4 px-2 bg-cyan-200 mb-2 mx-2 rounded-md">
+                <a href="">
+                    <h1 class="text-black text-center">Sort BY</h1>
+                </a>
+            </div>
+            <div class="py-4 px-2 bg-cyan-200 mb-2 mx-2 rounded-md">
+                <a href="">
+                    <h1 class="text-black text-center">Sort BY</h1>
+                </a>
+            </div>
+            <div class="py-4 px-2 bg-cyan-200 mb-2 mx-2 rounded-md">
+                <a href="">
+                    <h1 class="text-black text-center">Sort BY</h1>
+                </a>
+            </div>
+        </div>
+
+
+    </header>
+    <!-- HEADER LEFT NAVBAR END -->
+
+
+    <main class="box-2">
+        <!-- TOP SEARCH-BAR AND LOGO -->
+        <div class="p-4">
+            <div class="navbar bg-cyan-200 flex gap-2 justify-between rounded">
+                    <div class="form-control">
+                       <input type="text" placeholder="Search" class="input input-bordered" />
+                    </div>
+                  <div class="dropdown dropdown-end">
+                    <label tabindex="0" class="btn btn-ghost btn-circle avatar">
+                      <div class="w-10 rounded-full">
+                        <img src="./images/logo.png" />
+                      </div>
+                    </label>
+                    <ul tabindex="0" class="mt-3 p-2 shadow menu menu-compact dropdown-content bg-base-100 rounded-box w-52">
+                      <li>
+                        <a class="justify-between">
+                          Profile
+                          <span class="badge">New</span>
+                        </a>
+                      </li>
+                      <li><a>Settings</a></li>
+                      <li><a>Logout</a></li>
+                    </ul>
+                  </div>
+                </div>
+              </div>
+        <!-- TOP SEARCH-BAR AND LOGO END-->
+          
+        <!-- SORT AND FILTER START-->
+        <div class="flex justify-between align-center">
+          <!-- Sort -->
+          <div>
+          <select class="select w-full max-w-xs">
+            <option disabled selected>Sort by_</option>
+            <option>Top 50</option>
+            <option>Top 100</option>
+            <option>Top 200</option>
+            <option>ALL</option>
+          </select>
+          </div>
+
+          <!-- FILTER -->
+          <div>
+
+          </div>
+        </div>
+        <!-- SORT AND FILTER END-->
+
+        <!-- Main Contents -->
+        <div class="bg-purple-100 ">
+            <h1 class="text-2xl uppercase font-semibold p-4">Top 500 Billionaires</h1>
+
+            <!-- Table Data -->
+            <div class="overflow-x-auto overflow-y-auto w-11/12 mx-auto max-h-96">
+                <table class="table w-full">
+                  <!-- head -->
+                  <thead>
+                    <tr>
+                      <th>Name</th>
+                      <th>Industry</th>
+                      <th>Rank</th>
+                      <th>Wealth</th>
+                    </tr>
+                  </thead>
+
+                  <tbody id="table-body">
+                    <!-- row 1 -->
+                    <!-- <tr>
+                        <td>1</td>
+                      <td>
+                        <div class="flex items-center space-x-3">
+                          <div class="avatar">
+                            <div class="mask mask-squircle w-12 h-12">
+                              <img src="https://specials-images.forbesimg.com/imageserve/62d700cd6094d2c180f269b9/416x416.jpg?background=000000&cropX1=0&cropX2=959&cropY1=0&cropY2=959" alt="Avatar Tailwind CSS Component" />
+                            </div>
+                          </div>
+                          <div>
+                            <div class="font-bold">Elon Musk</div>
+                            <div class="text-sm opacity-50">United States</div>
+                          </div>
+                        </div>
+                      </td>
+                      <td>
+                        <span class="badge badge-lg badge-ghost badge-sm p-4">Automotive</span>
+                      </td>
+                      <td>2</td>
+                      <td>
+                        <h1 class="text-xl mb-2">$124317</h1>
+                        <button class="btn btn-accent btn-sm w-full">details</button>
+                      </td>
+                    </tr> -->
+
+                  </tbody>
+                </table>
+              </div>
+
+        </div>
+
+
+      
+    </main>
+
+
+
+    <!-- Java script -->
+    <script src="./js/main.js"></script>
+</body>
+</html>
+
+
