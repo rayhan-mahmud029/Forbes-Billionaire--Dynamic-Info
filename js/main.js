@@ -16,14 +16,27 @@ const getFilterData = async (filterValue) => {
     const resp = await fetch(`https://forbes400.onrender.com/api/forbes400/${filterValue}`);
     let data = await resp.json();
     // data = data.slice(0, 50)
-    showData(50, data, true, filterValue);
+    showData(400, data, true, filterValue);
   }
   catch (error) {
     console.log(error);
   }
 }
 
-const showData = (limit, data, filter, filterValue) => {
+// get Industry data from search
+const getIndustryData = async (searchText) => {
+  try {
+    const resp = await fetch(`https://forbes400.onrender.com/api/forbes400/industries/${searchText}`);
+    let data = await resp.json();
+    showData(400, data, true, searchText, true);
+  }
+  catch (error) {
+    console.log(error);
+  }
+}
+
+
+const showData = (limit, data, filter, filterValue, search) => {
   const tableBody = document.getElementById('table-body');
   tableBody.innerHTML = '';
   let i = 2;
@@ -58,7 +71,7 @@ const showData = (limit, data, filter, filterValue) => {
       <td>${realTimeRank}</td>
       <td>
         <h1 class="text-xl mb-2">$${worth}K</h1>
-        <label class="btn btn-accent btn-sm w-full" for="my-modal-3" onclick="fetchIndividualData(${limit}, ${realTimeRank}, ${filter}, '${filterValue}')">details</label>
+        <label class="btn btn-accent btn-sm w-full" for="my-modal-3" onclick="fetchIndividualData(${limit}, ${realTimeRank}, ${filter}, '${filterValue}', '${search}')">details</label>
 
       </td>
         `
@@ -68,24 +81,27 @@ const showData = (limit, data, filter, filterValue) => {
   })
 }
 
-const fetchIndividualData = async (limit, id, filter, filterValue) => {
-  if (filter === false) {
+const fetchIndividualData = async (limit, id, filter, filterValue, search) => {
+  if (filter === false && search === false) {
     const modalElement = document.getElementById('modal-body');
     modalElement.innerHTML = '';
     const resp = await fetch(`https://forbes400.onrender.com/api/forbes400?limit=${limit}`);
     const data = await resp.json();
     getIndividualData(id, data);
   }
-  else {
-    console.log(filterValue);
+  else if (search === false) {
     const modalElement = document.getElementById('modal-body');
     modalElement.innerHTML = ''
     const resp = await fetch(`https://forbes400.onrender.com/api/forbes400/${filterValue}`);
-  
     let data = await resp.json();
-    console.log(data);
     getIndividualData(id, data);
-
+  }
+  else {
+    const modalElement = document.getElementById('modal-body');
+    modalElement.innerHTML = ''
+    const resp = await fetch(`https://forbes400.onrender.com/api/forbes400/industries/${searchText}`);
+    let data = await resp.json();
+    getIndividualData(id, data);
   }
 }
 
@@ -115,10 +131,10 @@ const getIndividualData = (id, data) => {
     <h2 class="text-base font-semibold">Gender:<span class="font-normal"> ${gender === 'M' ? "Male" : "Female"} </span></h2>
 
     <h3 class="text-2xl font-semibold underline">Financial Information</h3>
-    <h2 class="text-base font-semibold">Exchange:<span class="font-normal"> ${Array.isArray(financialAssets) ? financialAssets.map(item => item.exchange).join(', '):'N/A'}</span></h2>
-    <h2 class="text-base font-semibold">Ticker:<span class="font-normal"> ${Array.isArray(financialAssets)?financialAssets.map(item => item.ticker).join(', '): 'N/A'}</span></h2>
-    <h2 class="text-base font-semibold">Total Shares:<span class="font-normal"> ${Array.isArray(financialAssets)?financialAssets.map(item => item.numberOfShares).join(', '): 'N/A'}</span></h2>
-    <h2 class="text-base font-semibold">Share Price:<span class="font-normal"> ${Array.isArray(financialAssets)?financialAssets.map(item => item.sharePrice).join(', '): 'N/A'}</span></h2>
+    <h2 class="text-base font-semibold">Exchange:<span class="font-normal"> ${Array.isArray(financialAssets) ? financialAssets.map(item => item.exchange).join(', ') : 'N/A'}</span></h2>
+    <h2 class="text-base font-semibold">Ticker:<span class="font-normal"> ${Array.isArray(financialAssets) ? financialAssets.map(item => item.ticker).join(', ') : 'N/A'}</span></h2>
+    <h2 class="text-base font-semibold">Total Shares:<span class="font-normal"> ${Array.isArray(financialAssets) ? financialAssets.map(item => item.numberOfShares).join(', ') : 'N/A'}</span></h2>
+    <h2 class="text-base font-semibold">Share Price:<span class="font-normal"> ${Array.isArray(financialAssets) ? financialAssets.map(item => item.sharePrice).join(', ') : 'N/A'}</span></h2>
     <h2 class="text-base font-semibold">:<span class="font-normal"> </span></h2>
   </div>
 </div>
@@ -150,3 +166,12 @@ const filterData = () => {
   getFilterData(filterValue);
   filterElement.innerText = `The list of Forbes ${filterValue} Billionaires`;
 }
+
+document.getElementById('search-bar').addEventListener('keyup', function (e) {
+  const searchText = e.target.value;
+  if (e.key == 'Enter') {
+    getIndustryData(searchText);
+    const filterElement = document.getElementById('filter-element');
+    filterElement.innerText = `The list of Forbes Billionaires in ${searchText} field`;
+  }
+})
