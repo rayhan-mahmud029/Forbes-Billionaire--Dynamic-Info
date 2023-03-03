@@ -1,10 +1,10 @@
-const demoImage = 'https://images.unsplash.com/photo-1618827840222-fcf8f42509c8?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1031&q=80'
+const demoImage = 'https://icon-library.com/images/anonymous-avatar-icon/anonymous-avatar-icon-25.jpg'
 
 const getData = async (limit) => {
   try {
     const resp = await fetch(`https://forbes400.onrender.com/api/forbes400?limit=${limit}`);
     const data = await resp.json();
-    showData(limit, data, false);
+    showData(limit, data, false, '', '', false);
   }
   catch (error) {
     console.log(error);
@@ -16,7 +16,7 @@ const getFilterData = async (filterValue) => {
     const resp = await fetch(`https://forbes400.onrender.com/api/forbes400/${filterValue}`);
     let data = await resp.json();
     // data = data.slice(0, 50)
-    showData(400, data, true, filterValue);
+    showData(400, data, true, filterValue, '', false);
   }
   catch (error) {
     console.log(error);
@@ -28,7 +28,7 @@ const getIndustryData = async (searchText) => {
   try {
     const resp = await fetch(`https://forbes400.onrender.com/api/forbes400/industries/${searchText}`);
     let data = await resp.json();
-    showData(400, data, true, searchText, true);
+    showData(400, data, false, '', searchText, true);
   }
   catch (error) {
     console.log(error);
@@ -36,7 +36,7 @@ const getIndustryData = async (searchText) => {
 }
 
 
-const showData = (limit, data, filter, filterValue, search) => {
+const showData = (limit, data, filter, filterValue, searchText, search) => {
   const tableBody = document.getElementById('table-body');
   tableBody.innerHTML = '';
   let i = 2;
@@ -71,7 +71,7 @@ const showData = (limit, data, filter, filterValue, search) => {
       <td>${realTimeRank}</td>
       <td>
         <h1 class="text-xl mb-2">$${worth}K</h1>
-        <label class="btn btn-accent btn-sm w-full" for="my-modal-3" onclick="fetchIndividualData(${limit}, ${realTimeRank}, ${filter}, '${filterValue}', '${search}')">details</label>
+        <label class="btn btn-accent btn-sm w-full" for="my-modal-3" onclick="fetchIndividualData(${limit}, ${realTimeRank}, ${filter}, '${filterValue}','${searchText}', ${search})">details</label>;
 
       </td>
         `
@@ -81,7 +81,8 @@ const showData = (limit, data, filter, filterValue, search) => {
   })
 }
 
-const fetchIndividualData = async (limit, id, filter, filterValue, search) => {
+const fetchIndividualData = async (limit, id, filter, filterValue, searchText, search) => {
+  console.log(filter, search);
   if (filter === false && search === false) {
     const modalElement = document.getElementById('modal-body');
     modalElement.innerHTML = '';
@@ -118,11 +119,11 @@ const getIndividualData = (id, data) => {
     <p class="text-xm">${bios}</p>
     
     <div class="flex gap-4 my-4">
-  <div>
-    <img src="${imageExists ? person.squareImage : demoImage}" alt="" class="mb-2">
+  <div class = "flex-1">
+    <img src="${imageExists ? person.squareImage : demoImage}" alt="" class="mb-2 w-full">
     <h3 class="text-lg font-semibold">Sources:<span class="font-normal"> ${source}</span></h3>
   </div>
-  <div class="leading-8 flex flex-col justify-between">
+  <div class="leading-8 flex flex-col justify-between flex-1">
     <h3 class="text-2xl font-semibold underline">General Information</h3>
     <h2 class="text-base font-semibold">Citizenship:<span class="font-normal"> ${countryOfCitizenship} </span></h2>
     <h2 class="text-base font-semibold">State:<span class="font-normal"> ${state}</span></h2>
@@ -133,9 +134,12 @@ const getIndividualData = (id, data) => {
     <h3 class="text-2xl font-semibold underline">Financial Information</h3>
     <h2 class="text-base font-semibold">Exchange:<span class="font-normal"> ${Array.isArray(financialAssets) ? financialAssets.map(item => item.exchange).join(', ') : 'N/A'}</span></h2>
     <h2 class="text-base font-semibold">Ticker:<span class="font-normal"> ${Array.isArray(financialAssets) ? financialAssets.map(item => item.ticker).join(', ') : 'N/A'}</span></h2>
-    <h2 class="text-base font-semibold">Total Shares:<span class="font-normal"> ${Array.isArray(financialAssets) ? financialAssets.map(item => item.numberOfShares).join(', ') : 'N/A'}</span></h2>
-    <h2 class="text-base font-semibold">Share Price:<span class="font-normal"> ${Array.isArray(financialAssets) ? financialAssets.map(item => item.sharePrice).join(', ') : 'N/A'}</span></h2>
-    <h2 class="text-base font-semibold">:<span class="font-normal"> </span></h2>
+
+
+    <!-- ----------------------------------------------------------
+    First get an array from array of objects using map and then use reduce to get sum or average of that array ---------------------------------------------------- -->
+    <h2 class="text-base font-semibold">Total Shares:<span class="font-normal"> ${Array.isArray(financialAssets) ? financialAssets.map(item => item.numberOfShares).reduce((partialSum, a) => partialSum + a, 0) : 'N/A'}</span></h2>
+    <h2 class="text-base font-semibold">Share Price:<span class="font-normal"> ${Array.isArray(financialAssets) ? financialAssets.map(item => item.sharePrice).reduce((a, b) => a + b) / financialAssets.map(item => item.sharePrice).length : 'N/A'} (Avg)</span></h2>
   </div>
 </div>
   </div>
@@ -164,7 +168,7 @@ const filterData = () => {
   const filterValue = document.getElementById('filter-option').value;
   const filterElement = document.getElementById('filter-element');
   getFilterData(filterValue);
-  filterElement.innerText = `The list of Forbes ${filterValue} Billionaires`;
+  filterElement.innerText = `Forbes ${filterValue} Billionaires`;
 }
 
 document.getElementById('search-bar').addEventListener('keyup', function (e) {
@@ -172,6 +176,6 @@ document.getElementById('search-bar').addEventListener('keyup', function (e) {
   if (e.key == 'Enter') {
     getIndustryData(searchText);
     const filterElement = document.getElementById('filter-element');
-    filterElement.innerText = `The list of Forbes Billionaires in ${searchText} field`;
+    filterElement.innerText = `Forbes Billionaires in ${searchText} field`;
   }
 })
