@@ -12,10 +12,10 @@ const getData = async (limit) => {
   }
 }
 
-const getFilterData = async (filterValue) => {
+const getFilterData = async (filterValue, sortValue='400') => {
   progressBarHandler(true)
   try {
-    const resp = await fetch(`https://forbes400.onrender.com/api/forbes400/${filterValue}`);
+    const resp = await fetch(`https://forbes400.onrender.com/api/forbes400/${filterValue}?limit=${sortValue}`);
     let data = await resp.json();
     // data = data.slice(0, 50)
     showData(400, data, true, filterValue, '', false);
@@ -26,11 +26,13 @@ const getFilterData = async (filterValue) => {
 }
 
 // get Industry data from search
-const getIndustryData = async (searchText) => {
+const getIndustryData = async (searchText, limit='400') => {
   progressBarHandler(true)
   try {
-    const resp = await fetch(`https://forbes400.onrender.com/api/forbes400/industries/${searchText}`);
+    const filterElement = document.getElementById('filter-element');
+    const resp = await fetch(`https://forbes400.onrender.com/api/forbes400/industries/${searchText}?limit=${limit}`);
     let data = await resp.json();
+    filterElement.innerText = `Forbes ${limit} Billionaires in ${searchText} field`;
     showData(400, data, false, '', searchText, true);
   }
   catch (error) {
@@ -51,7 +53,6 @@ const showData = (limit, data, filter, filterValue, searchText, search) => {
     const industry = industries[0];
     const worth = parseInt(finalWorth);
     const realTimeRank = rank;
-    // console.log(personName, image, country, industry, worth);
 
     const tableRow = document.createElement('tr');
     tableRow.innerHTML = `
@@ -88,7 +89,6 @@ const showData = (limit, data, filter, filterValue, searchText, search) => {
 
 const fetchIndividualData = async (limit, id, filter, filterValue, searchText, search) => {
   progressBarHandler(true)
-  console.log(filter, search);
   if (filter === false && search === false) {
     const modalElement = document.getElementById('modal-body');
     modalElement.innerHTML = '';
@@ -114,8 +114,7 @@ const fetchIndividualData = async (limit, id, filter, filterValue, searchText, s
 
 const getIndividualData = (id, data) => {
   const personData = data.find(person => person.rank == id)
-  console.log(personData);
-  const { personName, person, countryOfCitizenship, industries, finalWorth, rank, bios, source, city, state, birthDate, gender, financialAssets, imageExists, abouts, lastName, timestamp } = personData;
+  const { personName, person, squareImage, countryOfCitizenship, industries, finalWorth, rank, bios, source, city, state, birthDate, gender, financialAssets, imageExists, abouts, lastName, timestamp } = personData;
   const modalElement = document.getElementById('modal-body');
   modalElement.innerHTML = `
     <div class="modal-box relative w-3/4 max-w-none">
@@ -126,8 +125,8 @@ const getIndividualData = (id, data) => {
     
 <div class="flex flex-col lg:flex-row gap-4 my-4">
   <div class = "flex-1 p-6 bg-cyan-100 rounded-lg border-2 border-zinc-400 text-center">
-    <img src="${imageExists ? person.squareImage : demoImage}" alt="" class="mb-2 w-full rounded-lg">
-    <h3 class="text-lg font-semibold">Sources:<span class="font-normal"> ${source}</span></h3>
+    <img src="${imageExists ? squareImage : demoImage}" alt="" class="mb-2 w-full rounded-lg">
+    <h3 class="text-sm lg:text-lg font-semibold">Sources:<span class="font-normal"> ${source}</span></h3>
   </div>
   <div class="leading-8 flex flex-col justify-between flex-1 p-6 bg-cyan-100 rounded-lg border-2 border-zinc-400">
     <h3 class="text-xl lg:text-2xl font-semibold underline">General Information</h3>
@@ -137,20 +136,20 @@ const getIndividualData = (id, data) => {
     <h2 class="text-xs lg:text-base font-semibold">Birthday:<span class="font-normal"> ${toDateFormat(birthDate)}</span></h2>
     <h2 class="text-xs lg:text-base font-semibold">Gender:<span class="font-normal"> ${gender === 'M' ? "Male" : "Female"} </span></h2>
 
-    <h3 class="text-xl lg:text-2xl font-semibold underline">Financial Information</h3>
+    <h3 class="text-xl lg:text-2xl font-semibold underline mt-4">Financial Information</h3>
     <h2 class="text-xs lg:text-base font-semibold">Exchange:<span class="font-normal"> ${Array.isArray(financialAssets) ? financialAssets.map(item => item.exchange).join(', ') : 'N/A'}</span></h2>
     <h2 class="text-xs lg:text-base font-semibold">Ticker:<span class="font-normal"> ${Array.isArray(financialAssets) ? financialAssets.map(item => item.ticker).join(', ') : 'N/A'}</span></h2>
 
 
     <!-- ----------------------------------------------------------
     First get an array from array of objects using map and then use reduce to get sum or average of that array ---------------------------------------------------- -->
-    <h2 class="text-base font-semibold">Total Shares:<span class="font-normal"> ${Array.isArray(financialAssets) ? financialAssets.map(item => item.numberOfShares).reduce((partialSum, a) => partialSum + a, 0) : 'N/A'}</span></h2>
-    <h2 class="text-base font-semibold">Share Price:<span class="font-normal"> ${Array.isArray(financialAssets) ? financialAssets.map(item => item.sharePrice).reduce((a, b) => a + b) / financialAssets.map(item => item.sharePrice).length : 'N/A'} (Avg)</span></h2>
+    <h2 class="text-xs lg:text-sm font-semibold">Total Shares:<span class="font-normal"> ${Array.isArray(financialAssets) ? (financialAssets.map(item => item.numberOfShares).reduce((partialSum, a) => partialSum + a, 0)).toFixed(2) : 'N/A'}</span></h2>
+    <h2 class="text-xs lg:text-sm font-semibold">Share Price:<span class="font-normal"> ${Array.isArray(financialAssets) ? (financialAssets.map(item => item.sharePrice).reduce((a, b) => a + b) / financialAssets.map(item => item.sharePrice).length).toFixed(2) : 'N/A'} (Avg)</span></h2>
   </div>
 </div>
     <!-- About -->
-    <h3 class="text-2xl font-bold text-center">About ${lastName ? lastName : ''}:</h3>
-    <h3 class="text-xs lg:text-sm my-2 text-center">${abouts.join('<br>')}</h3>
+    <h3 class="text-xl lg:text-2xl font-bold text-center">About ${lastName ? lastName : ''}:</h3>
+    <h3 class="text-xs lg:text-sm my-2 text-center">${Array.isArray(abouts)? abouts.join('<br>') : ''}</h3>
     <h3 class="text-xs lg:text-sm mt-4 text-center text-neutral-400">Timestamp: ${toDateFormat(timestamp)}</h3>
   </div>
     `
@@ -164,11 +163,15 @@ const toDateFormat = date => {
 
 const sortDataLimit = () => {
   const sortText = document.getElementById('sort-option').value;
-  const sortValue = sortText.slice(4) != '' ? sortText.slice(4) : 'getAllBillionaires';
+  const sortValue = sortText.slice(4) != '' ? sortText.slice(4) : '400';
   const sortElement = document.getElementById('sort-limit');
-  if (sortValue === 'getAllBillionaires') {
-    getData(400)
-    sortElement.innerText = '400';
+  const searchText = document.getElementById('search-bar').value;
+  const filterValue = document.getElementById('filter-option').value;
+  if (searchText !== ''){
+    getIndustryData(searchText, sortValue);
+  }
+  else if (filterValue !== 'Filter_'){
+    getFilterData(filterValue, sortValue);
   }
   else {
     getData(sortValue);
@@ -176,18 +179,27 @@ const sortDataLimit = () => {
   }
 }
 const filterData = () => {
+  const sortText = document.getElementById('sort-option').value;
+  const sortValue = sortText.slice(4) != '' ? sortText.slice(4) : '400';
   const filterValue = document.getElementById('filter-option').value;
   const filterElement = document.getElementById('filter-element');
-  getFilterData(filterValue);
-  filterElement.innerText = `Forbes ${filterValue} Billionaires`;
+
+  if (sortValue !== '400'){
+    getFilterData(filterValue, sortValue);
+    filterElement.innerText = `Forbes Top ${sortValue} ${filterValue} Billionaires`;
+  }
+  else {
+    getFilterData(filterValue, '400')
+    filterElement.innerText = `Forbes ${filterValue} Billionaires`;
+  }
 }
 
 document.getElementById('search-bar').addEventListener('keyup', function (e) {
   const searchText = e.target.value;
+  const sortText = document.getElementById('sort-option').value;
+  const sortValue = sortText.slice(4) != '' ? sortText.slice(4) : '400';
   if (e.key == 'Enter') {
-    getIndustryData(searchText);
-    const filterElement = document.getElementById('filter-element');
-    filterElement.innerText = `Forbes Billionaires in ${searchText} field`;
+    getIndustryData(searchText, sortValue);
   }
 })
 
@@ -196,6 +208,7 @@ const progressBarHandler = (isTrue) => {
   const mainContents = document.getElementById('main-contents') ;
   if (isTrue === true) {
     element.classList.remove('hidden');
+    mainContents.classList.add('hidden');
   }
   else{
     mainContents.classList.remove('hidden');
