@@ -1,6 +1,7 @@
 const demoImage = 'https://icon-library.com/images/anonymous-avatar-icon/anonymous-avatar-icon-25.jpg'
 
 const getData = async (limit) => {
+  progressBarHandler(true)
   try {
     const resp = await fetch(`https://forbes400.onrender.com/api/forbes400?limit=${limit}`);
     const data = await resp.json();
@@ -12,6 +13,7 @@ const getData = async (limit) => {
 }
 
 const getFilterData = async (filterValue) => {
+  progressBarHandler(true)
   try {
     const resp = await fetch(`https://forbes400.onrender.com/api/forbes400/${filterValue}`);
     let data = await resp.json();
@@ -25,6 +27,7 @@ const getFilterData = async (filterValue) => {
 
 // get Industry data from search
 const getIndustryData = async (searchText) => {
+  progressBarHandler(true)
   try {
     const resp = await fetch(`https://forbes400.onrender.com/api/forbes400/industries/${searchText}`);
     let data = await resp.json();
@@ -60,7 +63,7 @@ const showData = (limit, data, filter, filterValue, searchText, search) => {
             </div>
           </div>
           <div>
-            <div class="font-bold">${personName}</div>
+            <div class="font-bold">${personName.length > 15 ? personName.slice(0, 15) + '..' : personName}</div>
             <div class="text-sm opacity-50">${country}</div>
           </div>
         </div>
@@ -71,7 +74,7 @@ const showData = (limit, data, filter, filterValue, searchText, search) => {
       <td>${realTimeRank}</td>
       <td>
         <h1 class="text-xl mb-2">$${worth}K</h1>
-        <label class="btn btn-accent btn-sm w-full" for="my-modal-3" onclick="fetchIndividualData(${limit}, ${realTimeRank}, ${filter}, '${filterValue}','${searchText}', ${search})">details</label>;
+        <label class="btn btn-accent btn-sm w-full" for="my-modal-3" onclick="fetchIndividualData(${limit}, ${realTimeRank}, ${filter}, '${filterValue}','${searchText}', ${search})">details</label>
 
       </td>
         `
@@ -79,9 +82,12 @@ const showData = (limit, data, filter, filterValue, searchText, search) => {
     i++;
     ;
   })
+  progressBarHandler(false)
+
 }
 
 const fetchIndividualData = async (limit, id, filter, filterValue, searchText, search) => {
+  progressBarHandler(true)
   console.log(filter, search);
   if (filter === false && search === false) {
     const modalElement = document.getElementById('modal-body');
@@ -109,31 +115,31 @@ const fetchIndividualData = async (limit, id, filter, filterValue, searchText, s
 const getIndividualData = (id, data) => {
   const personData = data.find(person => person.rank == id)
   console.log(personData);
-  const { person, countryOfCitizenship, industries, finalWorth, rank, bios, source, city, state, birthDate, gender, financialAssets, imageExists } = personData;
+  const { personName, person, countryOfCitizenship, industries, finalWorth, rank, bios, source, city, state, birthDate, gender, financialAssets, imageExists, abouts, lastName, timestamp } = personData;
   const modalElement = document.getElementById('modal-body');
   modalElement.innerHTML = `
     <div class="modal-box relative w-3/4 max-w-none">
     <label for="my-modal-3" class="btn btn-sm btn-circle absolute right-2 top-2">✕</label>
-    <h3 class="text-2xl font-bold text-center">${personData.personName}</h3>
-    <h3 class="text-3xl font-semibold my-4">$${finalWorth}K</h3>
-    <p class="text-xm">${bios}</p>
+    <h3 class="text-xl lg:text-2xl  font-bold text-center">${personName}</h3>
+    <h3 class="text-2xl lg:text-3xl font-semibold my-4 text-zinc-600">$${finalWorth}K</h3>
+    <p class="text-xs lg:text-base">${bios}</p>
     
-    <div class="flex gap-4 my-4">
-  <div class = "flex-1">
-    <img src="${imageExists ? person.squareImage : demoImage}" alt="" class="mb-2 w-full">
+<div class="flex flex-col lg:flex-row gap-4 my-4">
+  <div class = "flex-1 p-6 bg-cyan-100 rounded-lg border-2 border-zinc-400 text-center">
+    <img src="${imageExists ? person.squareImage : demoImage}" alt="" class="mb-2 w-full rounded-lg">
     <h3 class="text-lg font-semibold">Sources:<span class="font-normal"> ${source}</span></h3>
   </div>
-  <div class="leading-8 flex flex-col justify-between flex-1">
-    <h3 class="text-2xl font-semibold underline">General Information</h3>
-    <h2 class="text-base font-semibold">Citizenship:<span class="font-normal"> ${countryOfCitizenship} </span></h2>
-    <h2 class="text-base font-semibold">State:<span class="font-normal"> ${state}</span></h2>
-    <h2 class="text-base font-semibold">City:<span class="font-normal"> ${city}</span></h2>
-    <h2 class="text-base font-semibold">Birthday:<span class="font-normal"> ${toDateFormat(birthDate)}</span></h2>
-    <h2 class="text-base font-semibold">Gender:<span class="font-normal"> ${gender === 'M' ? "Male" : "Female"} </span></h2>
+  <div class="leading-8 flex flex-col justify-between flex-1 p-6 bg-cyan-100 rounded-lg border-2 border-zinc-400">
+    <h3 class="text-xl lg:text-2xl font-semibold underline">General Information</h3>
+    <h2 class="text-xs lg:text-base font-semibold">Citizenship:<span class="font-normal"> ${countryOfCitizenship} </span></h2>
+    <h2 class="text-xs lg:text-base font-semibold">State:<span class="font-normal"> ${state}</span></h2>
+    <h2 class="text-xs lg:text-base font-semibold">City:<span class="font-normal"> ${city}</span></h2>
+    <h2 class="text-xs lg:text-base font-semibold">Birthday:<span class="font-normal"> ${toDateFormat(birthDate)}</span></h2>
+    <h2 class="text-xs lg:text-base font-semibold">Gender:<span class="font-normal"> ${gender === 'M' ? "Male" : "Female"} </span></h2>
 
-    <h3 class="text-2xl font-semibold underline">Financial Information</h3>
-    <h2 class="text-base font-semibold">Exchange:<span class="font-normal"> ${Array.isArray(financialAssets) ? financialAssets.map(item => item.exchange).join(', ') : 'N/A'}</span></h2>
-    <h2 class="text-base font-semibold">Ticker:<span class="font-normal"> ${Array.isArray(financialAssets) ? financialAssets.map(item => item.ticker).join(', ') : 'N/A'}</span></h2>
+    <h3 class="text-xl lg:text-2xl font-semibold underline">Financial Information</h3>
+    <h2 class="text-xs lg:text-base font-semibold">Exchange:<span class="font-normal"> ${Array.isArray(financialAssets) ? financialAssets.map(item => item.exchange).join(', ') : 'N/A'}</span></h2>
+    <h2 class="text-xs lg:text-base font-semibold">Ticker:<span class="font-normal"> ${Array.isArray(financialAssets) ? financialAssets.map(item => item.ticker).join(', ') : 'N/A'}</span></h2>
 
 
     <!-- ----------------------------------------------------------
@@ -142,8 +148,13 @@ const getIndividualData = (id, data) => {
     <h2 class="text-base font-semibold">Share Price:<span class="font-normal"> ${Array.isArray(financialAssets) ? financialAssets.map(item => item.sharePrice).reduce((a, b) => a + b) / financialAssets.map(item => item.sharePrice).length : 'N/A'} (Avg)</span></h2>
   </div>
 </div>
+    <!-- About -->
+    <h3 class="text-2xl font-bold text-center">About ${lastName ? lastName : ''}:</h3>
+    <h3 class="text-xs lg:text-sm my-2 text-center">${abouts.join('<br>')}</h3>
+    <h3 class="text-xs lg:text-sm mt-4 text-center text-neutral-400">Timestamp: ${toDateFormat(timestamp)}</h3>
   </div>
     `
+  progressBarHandler(false);
 }
 
 const toDateFormat = date => {
@@ -179,3 +190,15 @@ document.getElementById('search-bar').addEventListener('keyup', function (e) {
     filterElement.innerText = `Forbes Billionaires in ${searchText} field`;
   }
 })
+
+const progressBarHandler = (isTrue) => {
+  const element = document.getElementById('progress-bar');
+  const mainContents = document.getElementById('main-contents') ;
+  if (isTrue === true) {
+    element.classList.remove('hidden');
+  }
+  else{
+    mainContents.classList.remove('hidden');
+    element.classList.add('hidden');
+  }
+}
