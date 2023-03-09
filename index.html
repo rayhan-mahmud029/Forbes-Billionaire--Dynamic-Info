@@ -12,6 +12,9 @@
   <!-- Daisy UI with Tailwind -->
   <link href="https://cdn.jsdelivr.net/npm/daisyui@2.51.3/dist/full.css" rel="stylesheet" type="text/css" />
   <script src="https://cdn.tailwindcss.com"></script>
+
+  <!-- FLowBite -->
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/flowbite/1.6.3/flowbite.min.css" rel="stylesheet" />
 </head>
 
 <!-- MODAL BODY Put this part before tag -->
@@ -34,27 +37,19 @@
         <h4 class="text-xl font-semibold uppercase text-cyan-400">Diary</h4>
       </div>
 
-      <div class="flex hidden lg:block">
-        <div class="py-4 px-2 bg-cyan-200 mb-2 mx-2 rounded-md">
-          <a href="">
-            <h1 class="text-black text-center">Sort BY</h1>
-          </a>
-        </div>
-        <div class="py-4 px-2 bg-cyan-200 mb-2 mx-2 rounded-md">
-          <a href="">
-            <h1 class="text-black text-center">Sort BY</h1>
-          </a>
-        </div>
-        <div class="py-4 px-2 bg-cyan-200 mb-2 mx-2 rounded-md">
-          <a href="">
-            <h1 class="text-black text-center">Sort BY</h1>
-          </a>
-        </div>
-        <div class="py-4 px-2 bg-cyan-200 mb-2 mx-2 rounded-md">
-          <a href="">
-            <h1 class="text-black text-center">Sort BY</h1>
-          </a>
-        </div>
+      <div class="flex flex-col w-11/12 mx-auto">
+        <button class="w-full text-white bg-gradient-to-r from-teal-400 via-teal-500 to-teal-600 hover:bg-gradient-to-br focus:ring-2 focus:outline-none focus:ring-teal-300 dark:focus:ring-teal-800 font-medium rounded-lg text-sm px-5 py-2.5 text-center mr-2 mb-2" id="sort-100">
+          <h1 class="text-black text-center">Sort By top 100</h1>
+        </button>
+        <button class="w-full text-white bg-gradient-to-r from-teal-400 via-teal-500 to-teal-600 hover:bg-gradient-to-br focus:ring-2 focus:outline-none focus:ring-teal-300 dark:focus:ring-teal-800 font-medium rounded-lg text-sm px-5 py-2.5 text-center mr-2 mb-2" id="filter-youngest">
+          <h1 class="text-black text-center">Filter Youngest Billionaires</h1>
+        </button>
+        <button class="w-full text-white bg-gradient-to-r from-teal-400 via-teal-500 to-teal-600 hover:bg-gradient-to-br focus:ring-2 focus:outline-none focus:ring-teal-300 dark:focus:ring-teal-800 font-medium rounded-lg text-sm px-5 py-2.5 text-center mr-2 mb-2" id="filter-female">
+          <h1 class="text-black text-center">Filter Female Billionaires</h1>
+        </button>
+        <button class="w-full text-white bg-gradient-to-r from-teal-400 via-teal-500 to-teal-600 hover:bg-gradient-to-br focus:ring-2 focus:outline-none focus:ring-teal-300 dark:focus:ring-teal-800 font-medium rounded-lg text-sm px-5 py-2.5 text-center mr-2 mb-2" id="search-technology">
+          <h1 class="text-black text-center">Search Technology Industry</h1>
+        </button>
       </div>
 
 
@@ -185,6 +180,8 @@
 
   <!-- Java script -->
   <script src="./js/main.js"></script>
+  <!-- FlowBite -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/flowbite/1.6.3/flowbite.min.js"></script>
 </body>
 
 </html>

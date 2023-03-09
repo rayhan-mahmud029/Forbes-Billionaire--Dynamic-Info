@@ -1,5 +1,22 @@
 const demoImage = 'https://icon-library.com/images/anonymous-avatar-icon/anonymous-avatar-icon-25.jpg'
 
+
+
+// Left Nav Buttons Query Handler
+document.getElementById('sort-100').addEventListener('click', function(){
+  sortDataLimit('100')
+});
+document.getElementById('filter-youngest').addEventListener('click', function(){
+  filterData('youngest')
+});
+document.getElementById('filter-female').addEventListener('click', function(){
+  filterData('female')
+});
+document.getElementById('search-technology').addEventListener('click', function(){
+  getIndustryData('technology')
+});
+
+// Getting Data by Fetching Starts from Here
 const getData = async (limit) => {
   progressBarHandler(true)
   try {
@@ -30,17 +47,24 @@ const getIndustryData = async (searchText, limit='400') => {
   progressBarHandler(true)
   try {
     const filterElement = document.getElementById('filter-element');
+    const filterOption = document.getElementById('filter-option');
     const resp = await fetch(`https://forbes400.onrender.com/api/forbes400/industries/${searchText}?limit=${limit}`);
     let data = await resp.json();
     filterElement.innerText = `Forbes ${limit} Billionaires in ${searchText} field`;
     showData(400, data, false, '', searchText, true);
+    filterOption.value = 'Filter_'
+    
   }
   catch (error) {
     console.log(error);
   }
 }
+// Getting Data by Fetching Starts Ends here
 
 
+
+
+// Showing Data in Table Starts Here
 const showData = (limit, data, filter, filterValue, searchText, search) => {
   const tableBody = document.getElementById('table-body');
   tableBody.innerHTML = '';
@@ -84,9 +108,12 @@ const showData = (limit, data, filter, filterValue, searchText, search) => {
     ;
   })
   progressBarHandler(false)
-
 }
+// Showing Data in Table Starts Here
 
+
+
+// Individual Data fetching
 const fetchIndividualData = async (limit, id, filter, filterValue, searchText, search) => {
   progressBarHandler(true)
   if (filter === false && search === false) {
@@ -111,7 +138,13 @@ const fetchIndividualData = async (limit, id, filter, filterValue, searchText, s
     getIndividualData(id, data);
   }
 }
+// Individual Data fetching Ends here
 
+
+
+
+
+// Individual Data fetching Showing in Modal starts here
 const getIndividualData = (id, data) => {
   const personData = data.find(person => person.rank == id)
   const { personName, person, squareImage, countryOfCitizenship, industries, finalWorth, rank, bios, source, city, state, birthDate, gender, financialAssets, imageExists, abouts, lastName, timestamp } = personData;
@@ -155,33 +188,43 @@ const getIndividualData = (id, data) => {
     `
   progressBarHandler(false);
 }
+// Individual Data fetching Showing in Modal ends here
 
+
+
+
+// Functions to handle tasks like sorting, filtering and progress bar starts here
 const toDateFormat = date => {
   const dateFormated = new Date(date);
   return dateFormated.toUTCString();
 }
 
-const sortDataLimit = () => {
+const sortDataLimit = (sortGiven) => {
   const sortText = document.getElementById('sort-option').value;
-  const sortValue = sortText.slice(4) != '' ? sortText.slice(4) : '400';
+  console.log(sortGiven);
+  const sortValue = sortGiven === 'undefined' ? sortText.slice(4) != '' ? sortText.slice(4) : '400' : sortGiven;
   const sortElement = document.getElementById('sort-limit');
+  const filterElement = document.getElementById('filter-element');
   const searchText = document.getElementById('search-bar').value;
   const filterValue = document.getElementById('filter-option').value;
+
   if (searchText !== ''){
     getIndustryData(searchText, sortValue);
   }
   else if (filterValue !== 'Filter_'){
     getFilterData(filterValue, sortValue);
+    filterElement.innerText = `Forbes Top ${sortValue} ${filterValue} Billionaires`;
   }
   else {
     getData(sortValue);
     sortElement.innerText = sortValue;
   }
 }
-const filterData = () => {
+const filterData = filterGiven => {
+  console.log(filterGiven);
   const sortText = document.getElementById('sort-option').value;
-  const sortValue = sortText.slice(4) != '' ? sortText.slice(4) : '400';
-  const filterValue = document.getElementById('filter-option').value;
+  const sortValue = sortText != 'Sort by_' ? sortText.slice(4) : '400';
+  const filterValue = filterGiven === 'undefined' ? document.getElementById('filter-option').value : filterGiven;
   const filterElement = document.getElementById('filter-element');
 
   if (sortValue !== '400'){
@@ -193,15 +236,6 @@ const filterData = () => {
     filterElement.innerText = `Forbes ${filterValue} Billionaires`;
   }
 }
-
-document.getElementById('search-bar').addEventListener('keyup', function (e) {
-  const searchText = e.target.value;
-  const sortText = document.getElementById('sort-option').value;
-  const sortValue = sortText.slice(4) != '' ? sortText.slice(4) : '400';
-  if (e.key == 'Enter') {
-    getIndustryData(searchText, sortValue);
-  }
-})
 
 const progressBarHandler = (isTrue) => {
   const element = document.getElementById('progress-bar');
@@ -215,3 +249,23 @@ const progressBarHandler = (isTrue) => {
     element.classList.add('hidden');
   }
 }
+// Functions to handle tasks like sorting, filtering and progress bar ends here
+
+
+
+// Search Handling Event
+document.getElementById('search-bar').addEventListener('keyup', function (e) {
+  const searchText = e.target.value;
+  const sortText = document.getElementById('sort-option').value;
+  const sortValue = sortText !== 'Sort by_' ? sortText.slice(4) : '400';
+  if (e.key == 'Enter') {
+    getIndustryData(searchText, sortValue);
+  }
+})
+// Search Handling Event Ends here
+
+
+
+
+
+
