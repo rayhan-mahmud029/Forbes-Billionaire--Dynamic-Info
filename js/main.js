@@ -3,18 +3,21 @@ const demoImage = 'https://icon-library.com/images/anonymous-avatar-icon/anonymo
 
 
 // Left Nav Buttons Query Handler
-document.getElementById('sort-100').addEventListener('click', function(){
+document.getElementById('sort-100').addEventListener('click', function () {
   sortDataLimit('100')
 });
-document.getElementById('filter-youngest').addEventListener('click', function(){
+document.getElementById('filter-youngest').addEventListener('click', function () {
   filterData('youngest')
 });
-document.getElementById('filter-female').addEventListener('click', function(){
+document.getElementById('filter-female').addEventListener('click', function () {
   filterData('female')
 });
-document.getElementById('search-technology').addEventListener('click', function(){
+document.getElementById('search-technology').addEventListener('click', function () {
   getIndustryData('technology')
 });
+// Left Nav Buttons Query Handler Ends Here 
+
+
 
 // Getting Data by Fetching Starts from Here
 const getData = async (limit) => {
@@ -29,7 +32,7 @@ const getData = async (limit) => {
   }
 }
 
-const getFilterData = async (filterValue, sortValue='400') => {
+const getFilterData = async (filterValue, sortValue = '400') => {
   progressBarHandler(true)
   try {
     const resp = await fetch(`https://forbes400.onrender.com/api/forbes400/${filterValue}?limit=${sortValue}`);
@@ -43,17 +46,23 @@ const getFilterData = async (filterValue, sortValue='400') => {
 }
 
 // get Industry data from search
-const getIndustryData = async (searchText, limit='400') => {
+const getIndustryData = async (searchText, limit = '400') => {
   progressBarHandler(true)
   try {
     const filterElement = document.getElementById('filter-element');
     const filterOption = document.getElementById('filter-option');
     const resp = await fetch(`https://forbes400.onrender.com/api/forbes400/industries/${searchText}?limit=${limit}`);
     let data = await resp.json();
-    filterElement.innerText = `Forbes ${limit} Billionaires in ${searchText} field`;
-    showData(400, data, false, '', searchText, true);
-    filterOption.value = 'Filter_'
-    
+    console.log(data);
+    if (data.length === 0) {
+      filterElement.innerHTML = `Invalid Search. Search instead 'technology', 'fashion'.. </br> 
+      forbes top 20 Billionaires`;
+      getData(20);
+    }
+    else {
+      showData(400, data, false, '', searchText, true);
+      filterOption.value = 'Filter_';
+    }
   }
   catch (error) {
     console.log(error);
@@ -182,13 +191,14 @@ const getIndividualData = (id, data) => {
 </div>
     <!-- About -->
     <h3 class="text-xl lg:text-2xl font-bold text-center">About ${lastName ? lastName : ''}:</h3>
-    <h3 class="text-xs lg:text-sm my-2 text-center">${Array.isArray(abouts)? abouts.join('<br>') : ''}</h3>
+    <h3 class="text-xs lg:text-sm my-2 text-center">${Array.isArray(abouts) ? abouts.join('<br>') : ''}</h3>
     <h3 class="text-xs lg:text-sm mt-4 text-center text-neutral-400">Timestamp: ${toDateFormat(timestamp)}</h3>
   </div>
     `
   progressBarHandler(false);
 }
 // Individual Data fetching Showing in Modal ends here
+
 
 
 
@@ -201,17 +211,18 @@ const toDateFormat = date => {
 
 const sortDataLimit = (sortGiven) => {
   const sortText = document.getElementById('sort-option').value;
-  console.log(sortGiven);
-  const sortValue = sortGiven === 'undefined' ? sortText.slice(4) != '' ? sortText.slice(4) : '400' : sortGiven;
+  const sortValue = sortGiven !== undefined ? sortGiven
+    : sortText.slice(4) != '' && sortGiven === undefined ? sortText.slice(4)
+      : '400';
   const sortElement = document.getElementById('sort-limit');
   const filterElement = document.getElementById('filter-element');
   const searchText = document.getElementById('search-bar').value;
   const filterValue = document.getElementById('filter-option').value;
 
-  if (searchText !== ''){
+  if (searchText !== '') {
     getIndustryData(searchText, sortValue);
   }
-  else if (filterValue !== 'Filter_'){
+  else if (filterValue !== 'Filter_') {
     getFilterData(filterValue, sortValue);
     filterElement.innerText = `Forbes Top ${sortValue} ${filterValue} Billionaires`;
   }
@@ -221,13 +232,13 @@ const sortDataLimit = (sortGiven) => {
   }
 }
 const filterData = filterGiven => {
-  console.log(filterGiven);
   const sortText = document.getElementById('sort-option').value;
   const sortValue = sortText != 'Sort by_' ? sortText.slice(4) : '400';
-  const filterValue = filterGiven === 'undefined' ? document.getElementById('filter-option').value : filterGiven;
+  const filterValue = filterGiven !== undefined ? filterGiven
+    : document.getElementById('filter-option').value;
   const filterElement = document.getElementById('filter-element');
 
-  if (sortValue !== '400'){
+  if (sortValue !== '400') {
     getFilterData(filterValue, sortValue);
     filterElement.innerText = `Forbes Top ${sortValue} ${filterValue} Billionaires`;
   }
@@ -239,12 +250,12 @@ const filterData = filterGiven => {
 
 const progressBarHandler = (isTrue) => {
   const element = document.getElementById('progress-bar');
-  const mainContents = document.getElementById('main-contents') ;
+  const mainContents = document.getElementById('main-contents');
   if (isTrue === true) {
     element.classList.remove('hidden');
     mainContents.classList.add('hidden');
   }
-  else{
+  else {
     mainContents.classList.remove('hidden');
     element.classList.add('hidden');
   }
@@ -253,12 +264,25 @@ const progressBarHandler = (isTrue) => {
 
 
 
-// Search Handling Event
+
+// Search Handling Event (KeyUp and Click)
 document.getElementById('search-bar').addEventListener('keyup', function (e) {
   const searchText = e.target.value;
   const sortText = document.getElementById('sort-option').value;
   const sortValue = sortText !== 'Sort by_' ? sortText.slice(4) : '400';
   if (e.key == 'Enter') {
+    getIndustryData(searchText, sortValue);
+  }
+})
+
+document.getElementById('search-button').addEventListener('click', function () {
+  const searchText = document.getElementById('search-bar').value;
+  const sortText = document.getElementById('sort-option').value;
+  const sortValue = sortText !== 'Sort by_' ? sortText.slice(4) : '400';
+  if (searchText === "") {
+    getData(20);
+  }
+  else {
     getIndustryData(searchText, sortValue);
   }
 })
